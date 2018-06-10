@@ -7,10 +7,15 @@ public class PlayerControllerAdvanced : MonoBehaviour {
     public float speed;
     public GameObject followCamera;
     private Rigidbody rb;
+    AudioSource RollingAudioSource;
+    AudioSource CollisionAudioSource;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
+        var sources = GetComponents<AudioSource>();
+        RollingAudioSource = sources[0];
+        CollisionAudioSource = sources[1];
     }
 
     /*
@@ -27,6 +32,9 @@ public class PlayerControllerAdvanced : MonoBehaviour {
         float moveVertical = Input.GetAxis("Vertical");
         Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical);
 
+        Vector3 xzPlaneVelocity = rb.velocity;
+        xzPlaneVelocity.y = 0;
+        RollingAudioSource.volume = xzPlaneVelocity.sqrMagnitude / 100;
         /*
          * The Euler function will return a struct that multiplied with a movement vector
          * will rotate the vector according to the euler functions input. Exactly how does
@@ -44,7 +52,21 @@ public class PlayerControllerAdvanced : MonoBehaviour {
         if (other.gameObject.CompareTag("pick_up"))
         {
             // Destroy(other.gameObject);
-            other.gameObject.SetActive(false);
+            pickUpController script=  other.gameObject.GetComponent<pickUpController>();
+                script.PlayPickUpSound();
+            //other.gameObject.SetActive(false);
+            
+            //PickUpAudioSource.Play();
         }
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.relativeVelocity.magnitude > 3)
+        {
+            CollisionAudioSource.volume = collision.relativeVelocity.magnitude / 40;
+            CollisionAudioSource.Play();
+        }
+            
     }
 }

@@ -20,7 +20,7 @@ MonoBehaviour:
   m_ShowMode: 4
   m_Title: 
   m_RootView: {fileID: 6}
-  m_MinSize: {x: 950, y: 300}
+  m_MinSize: {x: 950, y: 542}
   m_MaxSize: {x: 10000, y: 10000}
 --- !u!114 &2
 MonoBehaviour:
@@ -45,7 +45,7 @@ MonoBehaviour:
   m_MinSize: {x: 683, y: 492}
   m_MaxSize: {x: 14004, y: 14042}
   vertical: 0
-  controlID: 109
+  controlID: 9
 --- !u!114 &3
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -327,19 +327,19 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/_prefab
+    - Assets/_models
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/_prefab
+  - Assets/_models
   m_LastFoldersGridSize: -1
   m_LastProjectPath: C:\Users\mikae\Desktop\SpelProjekt\mmgames\FirstGame
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: c6270000
-    m_LastClickedID: 10182
-    m_ExpandedIDs: 000000008e270000ffffff7f
+    m_SelectedIDs: d2270000
+    m_LastClickedID: 10194
+    m_ExpandedIDs: 0000000090270000ffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -367,7 +367,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000008e270000
+    m_ExpandedIDs: 0000000090270000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -395,7 +395,7 @@ MonoBehaviour:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
     m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: 5e5f0000ba240000bc240000000000002a2f000032390000aa2800008e280000
+    m_ExpandedInstanceIDs: 5e5f0000ba240000bc2400002a2f000032390000aa2800008e2800005a2800000000000018280000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -485,9 +485,9 @@ MonoBehaviour:
   m_PersistentViewDataDictionary: {fileID: 0}
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 1c4d0000
-    m_LastClickedID: 19740
-    m_ExpandedIDs: 7007f0ffea07f0ff1c09f0ff1ee9f1ff6cebf1ff44a4f2ff7628f6ff3c34f6ffbc72f7ff14d3f8ff54eaf8ff786df9ff5c8ef9ff9efbffff00000000f04b0000e24c0000184d0000
+    m_SelectedIDs: 9e280000
+    m_LastClickedID: 0
+    m_ExpandedIDs: 9efbffff00000000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -538,14 +538,14 @@ MonoBehaviour:
     height: 655
   m_PersistentViewDataDictionary: {fileID: 0}
   m_SceneLighting: 1
-  lastFramingTime: 9105.093969883694
+  lastFramingTime: 6710.797047590522
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 43.97127, y: -23.914415, z: -12.60802}
+    m_Target: {x: 12.626946, y: 2.7220688, z: 4.299819}
     speed: 2
-    m_Value: {x: 43.97127, y: -23.914415, z: -12.60802}
+    m_Value: {x: 12.626946, y: 2.7220688, z: 4.299819}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -569,13 +569,13 @@ MonoBehaviour:
       speed: 2
       m_Value: 0
   m_Rotation:
-    m_Target: {x: -0.1588653, y: -0.80506784, z: 0.24850884, w: -0.51465625}
+    m_Target: {x: -0.25955573, y: 0.16131629, z: -0.044021294, w: -0.9511415}
     speed: 2
-    m_Value: {x: -0.1588653, y: -0.80506784, z: 0.24850884, w: -0.51465625}
+    m_Value: {x: -0.25955573, y: 0.16131629, z: -0.044021294, w: -0.9511415}
   m_Size:
-    m_Target: 74.60686
+    m_Target: 22.500422
     speed: 2
-    m_Value: 74.60686
+    m_Value: 22.500422
   m_Ortho:
     m_Target: 0
     speed: 2

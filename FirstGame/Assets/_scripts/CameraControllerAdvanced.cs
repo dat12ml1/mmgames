@@ -32,6 +32,18 @@ public class CameraControllerAdvanced : MonoBehaviour {
         Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
         cameraTransform.position = playerTransform.position + rotation * dir;
         transform.LookAt(playerTransform.position);
+        RaycastHit hit;
+
+        // if camera in a mesh then something should be done
+
+        /*
+         * this kind of works but i am not sure if the result is better or not ....
+        if (Physics.Raycast(playerTransform.position, rotation * dir, out hit, distance))
+        {
+            Debug.Log("hit");
+            cameraTransform.position = hit.point;
+        }
+        */
     }
 	// Update is called once per frame
 	void Update () {
