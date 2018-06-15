@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class pickUpController : MonoBehaviour {
 
+public class pickUpController : MonoBehaviour {
     static System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
     AudioSource PickUpAudioSource;
     Rigidbody rb;

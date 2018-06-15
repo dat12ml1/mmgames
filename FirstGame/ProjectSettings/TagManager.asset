@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - pick_up
+  - map_teleport
   layers:
   - Default
   - TransparentFX

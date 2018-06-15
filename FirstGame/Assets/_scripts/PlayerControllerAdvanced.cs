@@ -53,10 +53,14 @@ public class PlayerControllerAdvanced : MonoBehaviour {
         {
             // Destroy(other.gameObject);
             pickUpController script=  other.gameObject.GetComponent<pickUpController>();
-                script.PlayPickUpSound();
+            script.PlayPickUpSound();
             //other.gameObject.SetActive(false);
             
             //PickUpAudioSource.Play();
+        } else if(other.gameObject.CompareTag("map_teleport"))
+        {
+            TeleportController script = other.gameObject.GetComponent<TeleportController>();
+            script.changeMap();
         }
     }
 
