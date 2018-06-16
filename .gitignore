@@ -4,11 +4,11 @@
 FirstGame/[Tt]emp/
 FirstGame/[Oo]bj/
 FirstGame/[Bb]uild
-FirstGame//[Bb]uilds/
-FirstGame//[Ll]ibrary/
+FirstGame/[Bb]uilds/
+FirstGame/[Ll]ibrary/
 FirstGame/sysinfo.txt
 FirstGame/*.stackdump
-FirstGame//Assets/AssetStoreTools*
+FirstGame/Assets/AssetStoreTools*
 FirstGame/*.apk
 FirstGame/*.unitypackage
  
