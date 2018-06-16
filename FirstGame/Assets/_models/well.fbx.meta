@@ -1,23 +1,18 @@
 fileFormatVersion: 2
-guid: aa86a41d450c7d04590e005b52e40fcc
+guid: 5c3ec67c66b608649858edd73767e0cd
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: lister
-    2100002: walls_outside
-    2100004: roof_outside
-    2100006: groundmat
-    2100008: walls_inside
-    2100010: floor
+    2100000: rope
+    2100002: stone
     2300000: //RootNode
     3300000: //RootNode
-    4300000: Cube
-    2186277476908879412: ImportLogs
+    4300000: Torus.004
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
