@@ -64,12 +64,14 @@ public class PlayerControllerAdvanced : MonoBehaviour {
         }
     }
 
+    public int sound_impulse_threshold;
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.relativeVelocity.magnitude > 3)
+        if (collision.impulse.magnitude > sound_impulse_threshold)
         {
             CollisionAudioSource.volume = collision.relativeVelocity.magnitude / 40;
             CollisionAudioSource.Play();
+            
         }
             
     }

@@ -38,12 +38,12 @@ public class CameraControllerAdvanced : MonoBehaviour {
 
         /*
          * this kind of works but i am not sure if the result is better or not ....
+         * */
         if (Physics.Raycast(playerTransform.position, rotation * dir, out hit, distance))
         {
-            Debug.Log("hit");
-            cameraTransform.position = hit.point;
+            cameraTransform.position = hit.point+  rotation * dir *-0.2f;
         }
-        */
+        
     }
 	// Update is called once per frame
 	void Update () {
