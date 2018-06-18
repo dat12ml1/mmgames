@@ -306,6 +306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 8
   followCamera: {fileID: 0}
+  jumpForce: {x: 0, y: 5, z: 0}
   sound_impulse_threshold: 3
 --- !u!135 &135158673347079014
 SphereCollider:

@@ -9,20 +9,31 @@ public class PlayerControllerAdvanced : MonoBehaviour {
     private Rigidbody rb;
     AudioSource RollingAudioSource;
     AudioSource CollisionAudioSource;
+    public Vector3 jumpForce;
+
+    float distToGround;
+    bool performJump;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         var sources = GetComponents<AudioSource>();
+        
         RollingAudioSource = sources[0];
         CollisionAudioSource = sources[1];
+
+        distToGround = GetComponent<Collider>().bounds.extents.y;
     }
 
-    /*
-     *The idea is that the movement of the player should depend on the camera. So forward should be
-     * the direction the camera is facing
-     */
-    void FixedUpdate()
+    bool IsGrounded()  {
+       return Physics.Raycast(transform.position, -Vector3.up, distToGround + 0.1f);
+     }
+
+/*
+ *The idea is that the movement of the player should depend on the camera. So forward should be
+ * the direction the camera is facing
+ */
+void FixedUpdate()
     {
         /* 
          * Set up movement vector just as for the simple PlayerController
@@ -44,7 +55,34 @@ public class PlayerControllerAdvanced : MonoBehaviour {
          * Neat!
          */
         movement = Quaternion.Euler(0, followCamera.transform.eulerAngles.y, 0) * movement;
+
+        // You can only jump when on the ground
+        if (IsGrounded())
+        {
+            
+            if (performJump)
+            {
+                performJump = false;
+                rb.AddForce(jumpForce, ForceMode.Impulse);
+            }
+        } else
+        {
+            // You can move in the xz axis when not grounded however your movement is decreased
+            movement = movement / 2;
+        }
+
         rb.AddForce(movement * speed);
+
+            
+    }
+
+    void Update()
+    {
+        if(!performJump)
+        {
+            performJump = Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0);
+        }
+        
     }
 
     void OnTriggerEnter(Collider other)
