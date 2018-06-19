@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
+
 public class pickUpController : MonoBehaviour {
     static System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
     AudioSource PickUpAudioSource;
@@ -10,11 +11,15 @@ public class pickUpController : MonoBehaviour {
     private bool pickedUpByPlayer;
     public float secondsLiveAfterPickedUp;
     private float TimePickedUp;
+
+
     // Use this for initialization
     void Start () {
         pickedUpByPlayer = false;
         PickUpAudioSource = GetComponent<AudioSource>();
         rb = GetComponent<Rigidbody>();
+
+
     }
 
     // Update is called once per frame
@@ -44,4 +49,6 @@ public class pickUpController : MonoBehaviour {
         
         rb.AddForce(new Vector3(rand.Next(1, 50), 300, rand.Next(1, 50)));
     }
+
+
 }
