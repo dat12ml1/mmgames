@@ -53,6 +53,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\_scripts\BeeAnimationScript.cs" />
      <Compile Include="Assets\_scripts\CameraController.cs" />
      <Compile Include="Assets\_scripts\CameraControllerAdvanced.cs" />
      <Compile Include="Assets\_scripts\MovingPlatform.cs" />

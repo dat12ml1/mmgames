@@ -1,14 +1,12 @@
 fileFormatVersion: 2
-guid: 1086efed25c9ec24b829a0e539f2924d
+guid: 9c2ddd69456be44469934d7796038ae3
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: brown
-    2100002: yellow
-    2100004: black
-    2100006: white
+    2100000: metal
+    2100002: wood
     2300000: //RootNode
     3300000: //RootNode
     4300000: Plane
