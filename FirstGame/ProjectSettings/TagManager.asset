@@ -6,6 +6,8 @@ TagManager:
   tags:
   - pick_up
   - map_teleport
+  - player
+  - enemy
   layers:
   - Default
   - TransparentFX

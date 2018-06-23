@@ -5,33 +5,45 @@ using UnityEngine;
 
 
 
-public class BeeAnimationScript : MonoBehaviour {
+public class BeeController : MonoBehaviour {
 
-    private Animator animator;
+    
+    private CharacterController charController;
     private float preferredDistanceToGround;
-    public float transitionsTime;
-    public float attackDistance;
     public float detectDistance;
     public float speed;
-    
-    public Transform playerTransform;
+
+    public GameObject player;
+    private Transform playerTransform;
     private float hysteres = 0.01f;
     private float gravity_speed = 1.0f;
 
     Vector3 directionToPlayer;
     void Start () {
-        animator = GetComponent<Animator>();
-        animator.SetBool("isFlying", true);
+        // find out starting distance to ground
         RaycastHit hit;
         Physics.Raycast(transform.position, -Vector3.up, out hit, Mathf.Infinity);
         preferredDistanceToGround = transform.position.y - hit.point.y;
+
+        // get character controller reference
+        charController = GetComponent<CharacterController>();
+
+        // Set up so that physics is ignored between bee and player
+        Collider collider = GetComponent<Collider>();
+        PlayerControllerAdvanced playerScript = (PlayerControllerAdvanced)player.GetComponent(typeof(PlayerControllerAdvanced));
+        Physics.IgnoreCollision(playerScript.GetPlayerCollider(), collider);
+
+        // get transform from player gameobject
+        playerTransform = player.GetComponent<Transform>();
     }
 	
+    public Transform getPlayerTransform()
+    {
+        return player.GetComponent<Transform>();
+    }
 
     void Update()
     {
-
-
         // if player is closer than detectDistance then the bee follow the player by rotating towards the player and moving forward
         if (Vector3.Distance(transform.position, playerTransform.position) < detectDistance)
         {
@@ -39,54 +51,33 @@ public class BeeAnimationScript : MonoBehaviour {
             // only move in the xz axis
             directionToPlayer.y = 0;
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(directionToPlayer), Time.deltaTime);
-            transform.Translate(0, 0, speed * Time.deltaTime);
+            charController.Move(transform.forward * speed * Time.deltaTime);
         }
-
-        
+        // keep starting distance to ground by flying up/down as needed 
         followGround();
     }
 
     // keep distance to ground the same
     private void followGround()
     {
+        // check current distance to ground
         RaycastHit hit;
         Physics.Raycast(transform.position, -Vector3.up, out hit, Mathf.Infinity);
         float currentDistance = transform.position.y - hit.point.y;
-        Debug.Log(preferredDistanceToGround + " " + currentDistance);
+
+        // if distance is far apart from default distance to ground then add movement to correct it
         if (Mathf.Abs(preferredDistanceToGround - currentDistance) > hysteres)
         {
             if (currentDistance > preferredDistanceToGround)
             {
-                Debug.Log("go down");
-                transform.Translate(0, -gravity_speed * Time.deltaTime, 0);
+                charController.Move(new Vector3(0, -gravity_speed * Time.deltaTime, 0));
             }
             else
             {
-                Debug.Log("go up");
-                transform.Translate(0, gravity_speed * Time.deltaTime, 0);
+                charController.Move(new Vector3(0, gravity_speed * Time.deltaTime, 0));
             }
         }
     }
 
-    // Update is called once per frame
-    void LateUpdate () {
-        updateAnimation();
-    }
 
-    void updateAnimation() {
-        if (Vector3.Distance(transform.position, playerTransform.position) < attackDistance)
-        {
-            animator.SetBool("isFlying", false);
-            animator.SetBool("isAttacking", true);
-            //lastAttackTime = Time.time;
-            //animator.CrossFade("attack", transitionsTime);
-        }
-        else
-        {
-            animator.SetBool("isFlying", true);
-            animator.SetBool("isAttacking", false);
-        }
-    }
-
-    
 }

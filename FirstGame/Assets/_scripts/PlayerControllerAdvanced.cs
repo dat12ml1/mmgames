@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class PlayerControllerAdvanced : MonoBehaviour {
 
+    static System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
     public float speed;
     public GameObject followCamera;
     private Rigidbody rb;
     AudioSource RollingAudioSource;
     AudioSource CollisionAudioSource;
     public Vector3 jumpForce;
+    private Collider collider;
 
     float distToGround;
     bool performJump;
@@ -23,6 +25,12 @@ public class PlayerControllerAdvanced : MonoBehaviour {
         CollisionAudioSource = sources[1];
 
         distToGround = GetComponent<Collider>().bounds.extents.y;
+        collider = GetComponent<Collider>();
+    }
+
+    public Collider GetPlayerCollider()
+    {
+        return collider;
     }
 
     bool IsGrounded()  {
@@ -100,6 +108,11 @@ void FixedUpdate()
             TeleportController script = other.gameObject.GetComponent<TeleportController>();
             script.changeMap();
         }
+        else if (other.gameObject.CompareTag("enemy"))
+        {
+            Debug.Log("collision!");
+            rb.AddForce(jumpForce + new Vector3((float) rand.NextDouble(), (float) rand.NextDouble(), (float)rand.NextDouble()), ForceMode.Impulse);
+        }
     }
 
     public int sound_impulse_threshold;
@@ -111,6 +124,5 @@ void FixedUpdate()
             CollisionAudioSource.Play();
             
         }
-            
     }
 }
