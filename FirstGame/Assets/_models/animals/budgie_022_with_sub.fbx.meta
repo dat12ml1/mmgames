@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 4b03675a6d933bb4ead8379e8f0d77bf
+guid: 56b523a041218f34aac000df95802f67
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
@@ -72,7 +72,7 @@ ModelImporter:
     13700000: Plane
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
