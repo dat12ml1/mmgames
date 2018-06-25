@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControllerAdvanced : MonoBehaviour {
 
@@ -14,6 +15,10 @@ public class PlayerControllerAdvanced : MonoBehaviour {
     float distToGround;
     bool performJump;
 
+    //text
+    private int score;
+    public Text scoreText;
+
     void Start()
     {
         rb = GetComponent<Rigidbody>();
@@ -23,6 +28,10 @@ public class PlayerControllerAdvanced : MonoBehaviour {
         CollisionAudioSource = sources[1];
 
         distToGround = GetComponent<Collider>().bounds.extents.y;
+
+        //text
+        score = 0;
+        setScoreText();
     }
 
     bool IsGrounded()  {
@@ -92,8 +101,10 @@ void FixedUpdate()
             // Destroy(other.gameObject);
             pickUpController script=  other.gameObject.GetComponent<pickUpController>();
             script.PlayPickUpSound();
+            score = score + 1;
+            setScoreText();
             //other.gameObject.SetActive(false);
-            
+
             //PickUpAudioSource.Play();
         } else if(other.gameObject.CompareTag("map_teleport"))
         {
@@ -112,5 +123,26 @@ void FixedUpdate()
             
         }
             
+    }
+
+    void setScoreText()
+    {
+        bool checkpointReached = false;
+        bool death = false;
+        int prevCheckpointScore = 0;
+
+        if (checkpointReached == true)
+        {
+            prevCheckpointScore = score;
+        }
+
+        if (death)
+        {
+            score = prevCheckpointScore;
+        }
+
+
+        scoreText.text = "Score: " + score.ToString();
+
     }
 }
