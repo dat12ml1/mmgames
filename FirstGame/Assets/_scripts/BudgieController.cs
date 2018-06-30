@@ -1,0 +1,232 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class BudgieController : MonoBehaviour {
+
+    private CharacterController charController;
+    private float maxSpeedY = 5;
+    private float speedY;
+    private float gravity = 1.0f;
+    private Animator animator;
+
+    private float beginJumpTimeout;
+    public float walkSpeed;
+    public float runSpeed;
+    public float rotationSpeed;
+    public float jumpSpeed;
+   
+    public GameObject followCamera;
+    
+    public float distToGround;
+    private bool performJump;
+
+    
+    public float jumpTimeOut=1;
+    private float lastJumpTime = -100;
+    private Vector3 preJumpMovement = Vector3.zero;
+    private float jumpBoostFactor = 1.5f;
+
+    // Use this for initialization
+    void Start () {
+        speedY = 0;
+        charController = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
+        animator.SetBool("isIdle", true);
+        // doesn't work fix
+        //distToGround = charController.bounds.extents.y;
+
+
+
+    }
+	
+    bool isStationary()
+    {
+        Vector3 velocity = charController.velocity;
+        // we only care about xz axis
+        velocity.y = 0;
+        //why 0.01 ? just took a reasonable sounding value
+        return velocity.sqrMagnitude < 0.25;
+    }
+	// Update is called once per frame
+	void FixedUpdate () {
+
+        Vector3 movementToUse = new Vector3(0,speedY,0);
+        //Debug.DrawRay(transform.position, transform.up*10, Color.green, 0.1f);
+        //Debug.DrawRay(transform.position, transform.forward, Color.blue, 0.1f);
+        //Debug.DrawRay(transform.position, -transform.up* distToGround, Color.black, 0.1f);
+        //Debug.DrawRay(transform.position, Quaternion.Euler(0, 90, 0) * transform.forward, Color.yellow, 0.1f);
+
+        // gravity
+        applyGravity();
+        Vector3 directionToCamera = followCamera.transform.position - transform.position;
+        directionToCamera.y=0;
+
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+        if (moveHorizontal != 0 || moveVertical != 0)
+        {
+            //the character should rotate in the z axis when the player presses the movement keys. The rotation can be calculated as
+            float rotateChar = Mathf.Atan2(moveVertical, -moveHorizontal) / Mathf.PI * 180 - 90;
+            // We should rotate the character relative the cameras forward vector. We should the Slerp function to slowly rotate
+            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(Quaternion.Euler(0, rotateChar, 0) * directionToCamera), rotationSpeed * Time.deltaTime);
+
+            Vector3 inputMovement = new Vector3(moveHorizontal, speedY, moveVertical);
+            inputMovement = Quaternion.Euler(0, followCamera.transform.eulerAngles.y, 0) * inputMovement;
+            
+            if (isStationary())
+            {
+                // if we are standing still then we should start moving the character when the characters rotation is close enough to the desired rotation.
+                // The difference in angle to the desired rotation can be calculated as follows
+                float angleDiff = Quaternion.Angle(Quaternion.LookRotation(Quaternion.Euler(0, rotateChar, 0) * directionToCamera), Quaternion.LookRotation(transform.forward));
+
+                // what is reasonable? 15 degrees for now
+                if (angleDiff < 15.0f)
+                {
+                    movementToUse += inputMovement;
+                }
+            } else
+            {
+                // if we are not standing still then we should rotate while moving forward
+                movementToUse += inputMovement;
+                
+            }
+
+            
+        }
+
+        // multiply with speed depending on running/walking/falling
+        if (!IsGrounded())
+        {
+            Debug.Log(IsGrounded());
+            movementToUse.x = preJumpMovement.x;
+            movementToUse.z = preJumpMovement.z;
+        } else if (Input.GetKey(KeyCode.LeftShift))
+        {
+            movementToUse.x = movementToUse.x * runSpeed;
+            movementToUse.z = movementToUse.z * runSpeed;
+        }
+        else
+        {
+            movementToUse.x = movementToUse.x * walkSpeed;
+            movementToUse.z = movementToUse.z * walkSpeed;
+        }
+
+        // lets apply our movement
+        charController.Move(movementToUse * Time.deltaTime);
+
+    }
+
+    void applyGravity()
+    {
+        //should probably have some time out when you jump
+        if (!IsGrounded())
+        {
+            speedY -= gravity;
+        } else if(Time.time - lastJumpTime > jumpTimeOut)
+        {
+            // if we have been grounded and the jump key was not pressed in the interval between now and now - timeout.
+            // Why, well the updates after the jump the character will still be grounded and then the speed would be set to zero and the jump would be cancelled.
+            speedY = -1;
+            preJumpMovement = Vector3.zero;
+        }
+    }
+
+    bool IsGrounded()
+    {
+        Debug.DrawRay(transform.position, transform.TransformDirection(-Vector3.up) * distToGround, Color.white);
+        // to make it less likely to fail due lets send out a number of raycasts and return true if any hits
+        return Physics.Raycast(transform.position + new Vector3(0, 0, 0), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(1, 0, 0), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(-1, 0, 0), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(0, 0, 1), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(0, 0, -1), -Vector3.up, distToGround + 0.25f);
+
+
+    }
+
+    void jump()
+    {
+        speedY = jumpSpeed;
+        lastJumpTime = Time.time;
+
+        // the idea is that the movement in xz axis should remain during the jump
+        float moveHorizontal = Input.GetAxis("Horizontal");
+        float moveVertical = Input.GetAxis("Vertical");
+
+        preJumpMovement = new Vector3(moveHorizontal, 0, moveVertical);
+        preJumpMovement = Quaternion.Euler(0, followCamera.transform.eulerAngles.y, 0) * preJumpMovement;
+
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            preJumpMovement = preJumpMovement * runSpeed* jumpBoostFactor;
+        }
+        else
+        {
+            preJumpMovement = preJumpMovement * walkSpeed* jumpBoostFactor;
+        }
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time - lastJumpTime > jumpTimeOut && IsGrounded())
+        {
+            
+            animator.SetBool("isJumping", true);
+            animator.SetBool("isIdle", false);
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isRunning", false);
+            jump();
+
+
+
+        } else if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                animator.SetBool("isWalking", false);
+                animator.SetBool("isRunning", true);
+            } else
+            {
+                animator.SetBool("isWalking", true);
+                animator.SetBool("isRunning", false);
+            }
+            animator.SetBool("isJumping", false);
+            animator.SetBool("isIdle", false);
+        } else
+        {
+            animator.SetBool("isJumping", false);
+            animator.SetBool("isIdle", true);
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isRunning", false);
+        }
+
+        
+        
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.CompareTag("pick_up"))
+        {
+            // Destroy(other.gameObject);
+            pickUpController script = other.gameObject.GetComponent<pickUpController>();
+            script.PlayPickUpSound();
+            //score = score + 1;
+            //setScoreText();
+            //other.gameObject.SetActive(false);
+
+            //PickUpAudioSource.Play();
+        }
+        else if (other.gameObject.CompareTag("map_teleport"))
+        {
+            TeleportController script = other.gameObject.GetComponent<TeleportController>();
+            script.changeMap();
+        }
+        else if (other.gameObject.CompareTag("enemy"))
+        {
+            //Debug.Log("collision!");
+            //rb.AddForce(jumpForce + new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), ForceMode.Impulse);
+        }
+    }
+}

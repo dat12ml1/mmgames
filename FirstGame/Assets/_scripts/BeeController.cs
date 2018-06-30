@@ -31,7 +31,7 @@ public class BeeController : MonoBehaviour {
         // Set up so that physics is ignored between bee and player
         Collider collider = GetComponent<Collider>();
         PlayerControllerAdvanced playerScript = (PlayerControllerAdvanced)player.GetComponent(typeof(PlayerControllerAdvanced));
-        Physics.IgnoreCollision(playerScript.GetPlayerCollider(), collider);
+        //Physics.IgnoreCollision(playerScript.GetPlayerCollider(), collider);
 
         // get transform from player gameobject
         playerTransform = player.GetComponent<Transform>();
