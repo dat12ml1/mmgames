@@ -40,6 +40,23 @@ public class BudgieController : MonoBehaviour {
 
     }
 	
+    public void boneTriggered(Collider other)
+    {
+        
+        if (other.gameObject.CompareTag("enemy"))
+        {
+            if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
+            {
+                Debug.Log("killed enemy");
+            }
+            else
+            {
+                Debug.Log("killed by enemy");
+            }
+            
+            //rb.AddForce(jumpForce + new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), ForceMode.Impulse);
+        }
+    }
     bool isStationary()
     {
         Vector3 velocity = charController.velocity;
@@ -98,7 +115,6 @@ public class BudgieController : MonoBehaviour {
         // multiply with speed depending on running/walking/falling
         if (!IsGrounded())
         {
-            Debug.Log(IsGrounded());
             movementToUse.x = preJumpMovement.x;
             movementToUse.z = preJumpMovement.z;
         } else if (Input.GetKey(KeyCode.LeftShift))
@@ -176,11 +192,19 @@ public class BudgieController : MonoBehaviour {
             animator.SetBool("isIdle", false);
             animator.SetBool("isWalking", false);
             animator.SetBool("isRunning", false);
+            animator.SetBool("isAttacking", false);
             jump();
 
 
 
-        } else if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
+        } else if (Input.GetKeyDown(KeyCode.LeftControl)) {
+            animator.SetBool("isJumping", false);
+            animator.SetBool("isIdle", false);
+            animator.SetBool("isWalking", false);
+            animator.SetBool("isRunning", false);
+            animator.SetBool("isAttacking", true);
+        }
+        else if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
         {
             if (Input.GetKey(KeyCode.LeftShift))
             {
@@ -193,12 +217,14 @@ public class BudgieController : MonoBehaviour {
             }
             animator.SetBool("isJumping", false);
             animator.SetBool("isIdle", false);
+            animator.SetBool("isAttacking", false);
         } else
         {
             animator.SetBool("isJumping", false);
             animator.SetBool("isIdle", true);
             animator.SetBool("isWalking", false);
             animator.SetBool("isRunning", false);
+            animator.SetBool("isAttacking", false);
         }
 
         
@@ -225,8 +251,11 @@ public class BudgieController : MonoBehaviour {
         }
         else if (other.gameObject.CompareTag("enemy"))
         {
-            //Debug.Log("collision!");
+            Debug.Log("collision!");
             //rb.AddForce(jumpForce + new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), ForceMode.Impulse);
         }
     }
+
 }
+
+

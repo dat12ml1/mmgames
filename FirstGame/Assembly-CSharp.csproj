@@ -55,6 +55,7 @@
   <ItemGroup>
      <Compile Include="Assets\_scripts\BeeAnimationController.cs" />
      <Compile Include="Assets\_scripts\BeeController.cs" />
+     <Compile Include="Assets\_scripts\budgieBoneController.cs" />
      <Compile Include="Assets\_scripts\BudgieController.cs" />
      <Compile Include="Assets\_scripts\CameraController.cs" />
      <Compile Include="Assets\_scripts\CameraControllerAdvanced.cs" />
