@@ -8,6 +8,9 @@ TagManager:
   - map_teleport
   - player
   - enemy
+  - checkpoint
+  - water
+  - heart
   layers:
   - Default
   - TransparentFX

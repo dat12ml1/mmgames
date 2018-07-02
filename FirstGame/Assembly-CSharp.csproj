@@ -59,6 +59,7 @@
      <Compile Include="Assets\_scripts\BudgieController.cs" />
      <Compile Include="Assets\_scripts\CameraController.cs" />
      <Compile Include="Assets\_scripts\CameraControllerAdvanced.cs" />
+     <Compile Include="Assets\_scripts\CheckpointController.cs" />
      <Compile Include="Assets\_scripts\MovingPlatform.cs" />
      <Compile Include="Assets\_scripts\pickUpController.cs" />
      <Compile Include="Assets\_scripts\PlayerController.cs" />

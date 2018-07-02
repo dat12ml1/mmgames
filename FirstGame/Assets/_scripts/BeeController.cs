@@ -7,7 +7,8 @@ using UnityEngine;
 
 public class BeeController : MonoBehaviour {
 
-    
+    static System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
+
     private CharacterController charController;
     private float preferredDistanceToGround;
     public float detectDistance;
@@ -17,6 +18,11 @@ public class BeeController : MonoBehaviour {
     private Transform playerTransform;
     private float hysteres = 0.01f;
     private float gravity_speed = 1.0f;
+
+    private bool alive=true;
+    private float deathTime;
+    private float deathTimeOut=1.0f;
+    private Vector3 deathJump;
 
     Vector3 directionToPlayer;
     void Start () {
@@ -44,19 +50,44 @@ public class BeeController : MonoBehaviour {
 
     void Update()
     {
-        // if player is closer than detectDistance then the bee follow the player by rotating towards the player and moving forward
-        if (Vector3.Distance(transform.position, playerTransform.position) < detectDistance)
+        if(alive)
         {
-            directionToPlayer = playerTransform.position - transform.position;
-            // only move in the xz axis
-            directionToPlayer.y = 0;
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(directionToPlayer), Time.deltaTime);
-            charController.Move(transform.forward * speed * Time.deltaTime);
+            // if player is closer than detectDistance then the bee follow the player by rotating towards the player and moving forward
+            if (Vector3.Distance(transform.position, playerTransform.position) < detectDistance)
+            {
+                directionToPlayer = playerTransform.position - transform.position;
+                // only move in the xz axis
+                directionToPlayer.y = 0;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(directionToPlayer), Time.deltaTime);
+                charController.Move(transform.forward * speed * Time.deltaTime);
+            }
+            // keep starting distance to ground by flying up/down as needed 
+            followGround();
+        } else
+        {
+            if(Time.time-deathTime > deathTimeOut)
+            {
+                // death scene is finished, deactivate enemy
+                gameObject.SetActive(false);
+            } else
+            {
+                // do something
+                charController.Move(deathJump * Time.deltaTime);
+                transform.localScale -= transform.localScale * Time.deltaTime;
+            }
         }
-        // keep starting distance to ground by flying up/down as needed 
-        followGround();
+        
     }
 
+    public void initDeath()
+    {
+        // set time of death
+        deathTime = Time.time;
+        // set death flag
+        alive = false;
+        // randomize death "jump"
+        deathJump = new Vector3(rand.Next(2), 2, rand.Next(1, 2));
+    }
     // keep distance to ground the same
     private void followGround()
     {

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class BudgieController : MonoBehaviour {
 
+    static System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
+
     private CharacterController charController;
     private float maxSpeedY = 5;
     private float speedY;
@@ -27,12 +29,32 @@ public class BudgieController : MonoBehaviour {
     private Vector3 preJumpMovement = Vector3.zero;
     private float jumpBoostFactor = 1.5f;
 
+    private Material[] materials;
+    private Color[] original_material_color;
+    private Color hitColor = new Color(1, 1, 1, 1);
+
+    private bool hit = false;
+    private float hitTime;
+    private float hitCoolDown = 1.0f;
+    public float hitSpeed;
+    private Vector3 hitJump;
+
+    private Vector3 spawnpoint;
+
+
     // Use this for initialization
     void Start () {
         speedY = 0;
         charController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         animator.SetBool("isIdle", true);
+
+        materials = GetComponentsInChildren<Renderer>()[0].materials;
+        original_material_color = new Color[materials.Length];
+        for(int i = 0; i < original_material_color.Length; i++)
+        {
+            original_material_color[i] = materials[i].color;
+        }
         // doesn't work fix
         //distToGround = charController.bounds.extents.y;
 
@@ -40,21 +62,54 @@ public class BudgieController : MonoBehaviour {
 
     }
 	
-    public void boneTriggered(Collider other)
+   
+    private void enemyContact(Collider other)
     {
-        
+        if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
+        {
+            Debug.Log("killed enemy");
+            other.gameObject.GetComponent<BeeController>().initDeath();
+        }
+        else
+        {
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i].color = hitColor;
+            }
+            // set time of hit
+            hitTime = Time.time;
+            // set hit flag
+            hit = true;
+            // randomize hit "jump"
+            hitJump = new Vector3((float)rand.NextDouble()+0.5f, 1, (float)rand.NextDouble() + 0.5f);
+
+            Debug.Log("hit by enemy");
+        }
+    }
+
+    private void hitMovement()
+    {
+        if (Time.time - hitTime > hitCoolDown)
+        {
+            // hit movement is finished
+            hit = false;
+            for (int i = 0; i < materials.Length; i++)
+            {
+                materials[i].color = original_material_color[i];
+            }
+        }
+        else
+        {
+            // do something
+            charController.Move(hitJump * hitSpeed *Time.deltaTime);
+        }
+    }
+
+    public void boneTriggered(Collider other)
+    {   
         if (other.gameObject.CompareTag("enemy"))
         {
-            if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
-            {
-                Debug.Log("killed enemy");
-            }
-            else
-            {
-                Debug.Log("killed by enemy");
-            }
-            
-            //rb.AddForce(jumpForce + new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), ForceMode.Impulse);
+            enemyContact(other);
         }
     }
     bool isStationary()
@@ -65,10 +120,25 @@ public class BudgieController : MonoBehaviour {
         //why 0.01 ? just took a reasonable sounding value
         return velocity.sqrMagnitude < 0.25;
     }
-	// Update is called once per frame
-	void FixedUpdate () {
 
-        Vector3 movementToUse = new Vector3(0,speedY,0);
+    // Update is called once per frame
+    void FixedUpdate ()
+    {
+        if(hit)
+        {
+            hitMovement();
+        } else
+        {
+            // normal movement
+            updateMovement();
+        }
+        
+
+    }
+
+    private void updateMovement()
+    {
+        Vector3 movementToUse = new Vector3(0, speedY, 0);
         //Debug.DrawRay(transform.position, transform.up*10, Color.green, 0.1f);
         //Debug.DrawRay(transform.position, transform.forward, Color.blue, 0.1f);
         //Debug.DrawRay(transform.position, -transform.up* distToGround, Color.black, 0.1f);
@@ -77,7 +147,7 @@ public class BudgieController : MonoBehaviour {
         // gravity
         applyGravity();
         Vector3 directionToCamera = followCamera.transform.position - transform.position;
-        directionToCamera.y=0;
+        directionToCamera.y = 0;
 
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
@@ -90,7 +160,7 @@ public class BudgieController : MonoBehaviour {
 
             Vector3 inputMovement = new Vector3(moveHorizontal, speedY, moveVertical);
             inputMovement = Quaternion.Euler(0, followCamera.transform.eulerAngles.y, 0) * inputMovement;
-            
+
             if (isStationary())
             {
                 // if we are standing still then we should start moving the character when the characters rotation is close enough to the desired rotation.
@@ -102,14 +172,15 @@ public class BudgieController : MonoBehaviour {
                 {
                     movementToUse += inputMovement;
                 }
-            } else
+            }
+            else
             {
                 // if we are not standing still then we should rotate while moving forward
                 movementToUse += inputMovement;
-                
+
             }
 
-            
+
         }
 
         // multiply with speed depending on running/walking/falling
@@ -117,7 +188,8 @@ public class BudgieController : MonoBehaviour {
         {
             movementToUse.x = preJumpMovement.x;
             movementToUse.z = preJumpMovement.z;
-        } else if (Input.GetKey(KeyCode.LeftShift))
+        }
+        else if (Input.GetKey(KeyCode.LeftShift))
         {
             movementToUse.x = movementToUse.x * runSpeed;
             movementToUse.z = movementToUse.z * runSpeed;
@@ -130,7 +202,6 @@ public class BudgieController : MonoBehaviour {
 
         // lets apply our movement
         charController.Move(movementToUse * Time.deltaTime);
-
     }
 
     void applyGravity()
@@ -151,12 +222,16 @@ public class BudgieController : MonoBehaviour {
     bool IsGrounded()
     {
         Debug.DrawRay(transform.position, transform.TransformDirection(-Vector3.up) * distToGround, Color.white);
+        Debug.DrawRay(transform.position + new Vector3(0.1f, 0, 0), transform.TransformDirection(-Vector3.up) * distToGround, Color.white);
+        Debug.DrawRay(transform.position + new Vector3(-0.1f, 0, 0), transform.TransformDirection(-Vector3.up) * distToGround, Color.white);
+        Debug.DrawRay(transform.position + new Vector3(0, 0, 0.1f), transform.TransformDirection(-Vector3.up) * distToGround, Color.white);
+        Debug.DrawRay(transform.position + new Vector3(0, 0, -0.1f), transform.TransformDirection(-Vector3.up) * distToGround, Color.white);
         // to make it less likely to fail due lets send out a number of raycasts and return true if any hits
         return Physics.Raycast(transform.position + new Vector3(0, 0, 0), -Vector3.up, distToGround + 0.25f) ||
-               Physics.Raycast(transform.position + new Vector3(1, 0, 0), -Vector3.up, distToGround + 0.25f) ||
-               Physics.Raycast(transform.position + new Vector3(-1, 0, 0), -Vector3.up, distToGround + 0.25f) ||
-               Physics.Raycast(transform.position + new Vector3(0, 0, 1), -Vector3.up, distToGround + 0.25f) ||
-               Physics.Raycast(transform.position + new Vector3(0, 0, -1), -Vector3.up, distToGround + 0.25f);
+               Physics.Raycast(transform.position + new Vector3(0.1f, 0, 0), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(-0.1f, 0, 0), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(0, 0, 0.1f), -Vector3.up, distToGround + 0.25f) ||
+               Physics.Raycast(transform.position + new Vector3(0, 0, -0.1f), -Vector3.up, distToGround + 0.25f);
 
 
     }
@@ -244,6 +319,11 @@ public class BudgieController : MonoBehaviour {
 
             //PickUpAudioSource.Play();
         }
+        else if (other.gameObject.CompareTag("heart"))
+        {
+            pickUpController script = other.gameObject.GetComponent<pickUpController>();
+            script.PlayPickUpSound();
+        }
         else if (other.gameObject.CompareTag("map_teleport"))
         {
             TeleportController script = other.gameObject.GetComponent<TeleportController>();
@@ -251,8 +331,15 @@ public class BudgieController : MonoBehaviour {
         }
         else if (other.gameObject.CompareTag("enemy"))
         {
-            Debug.Log("collision!");
-            //rb.AddForce(jumpForce + new Vector3((float)rand.NextDouble(), (float)rand.NextDouble(), (float)rand.NextDouble()), ForceMode.Impulse);
+            enemyContact(other);
+        }
+        else if (other.gameObject.CompareTag("checkpoint"))
+        {
+            spawnpoint = other.gameObject.GetComponent<CheckpointController>().GetSpawnPoint();
+        }
+        else if (other.gameObject.CompareTag("water"))
+        {
+            transform.position = spawnpoint;
         }
     }
 

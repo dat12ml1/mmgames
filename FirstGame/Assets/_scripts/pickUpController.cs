@@ -11,6 +11,7 @@ public class pickUpController : MonoBehaviour {
     private bool pickedUpByPlayer;
     public float secondsLiveAfterPickedUp;
     private float TimePickedUp;
+    public Vector3 rotVector;
 
 
     // Use this for initialization
@@ -36,7 +37,7 @@ public class pickUpController : MonoBehaviour {
             
         } else
         {
-            transform.Rotate(new Vector3(15, 30, 45) * Time.deltaTime);
+            transform.Rotate(rotVector * Time.deltaTime);
         }
     }
 
