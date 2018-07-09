@@ -1,18 +1,25 @@
 fileFormatVersion: 2
-guid: 86c96025fadba1c4bbb8d9cc57988804
+guid: 1efffae91a559194087a161d3fffac5c
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: bot
-    2100002: top
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cylinder
+    100000: ground
+    100002: lettuce
+    100004: //RootNode
+    400000: ground
+    400002: lettuce
+    400004: //RootNode
+    2100000: leaf
+    2100002: dirt
+    2300000: ground
+    2300002: lettuce
+    3300000: ground
+    3300002: lettuce
+    4300000: lettuce
+    4300002: ground
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1

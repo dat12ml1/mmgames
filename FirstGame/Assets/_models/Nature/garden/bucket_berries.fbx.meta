@@ -1,18 +1,20 @@
 fileFormatVersion: 2
-guid: 86c96025fadba1c4bbb8d9cc57988804
+guid: 42b2ca9e996f44e4e95f81f3089604ea
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
     100000: //RootNode
     400000: //RootNode
-    2100000: bot
-    2100002: top
+    2100000: wood
+    2100002: metal
+    2100004: leaf
+    2100006: tomato
     2300000: //RootNode
     3300000: //RootNode
     4300000: Cylinder
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1

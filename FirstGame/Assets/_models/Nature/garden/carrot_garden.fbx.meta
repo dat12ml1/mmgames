@@ -1,18 +1,26 @@
 fileFormatVersion: 2
-guid: 86c96025fadba1c4bbb8d9cc57988804
+guid: da03f8f77e0d4ed4b9c6657fe72e1b31
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: //RootNode
-    400000: //RootNode
-    2100000: bot
-    2100002: top
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cylinder
+    100000: carrot
+    100002: //RootNode
+    100004: ground
+    400000: carrot
+    400002: //RootNode
+    400004: ground
+    2100000: carrot
+    2100002: leaf
+    2100004: dirt
+    2300000: carrot
+    2300002: ground
+    3300000: carrot
+    3300002: ground
+    4300000: carrot
+    4300002: ground
   externalObjects: {}
   materials:
-    importMaterials: 1
+    importMaterials: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
