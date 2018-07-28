@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class BudgieController : MonoBehaviour {
 
+    private enum BUDGIE_MODE { MOVE, HIT, WATER};
+    private BUDGIE_MODE current_mode = BUDGIE_MODE.MOVE;
     static System.Random rand = new System.Random(System.DateTime.Now.Millisecond);
+
+    private BudgieSoundController budgieSoundController;
 
     private CharacterController charController;
     private float maxSpeedY = 5;
@@ -33,7 +37,6 @@ public class BudgieController : MonoBehaviour {
     private Color[] original_material_color;
     private Color hitColor = new Color(1, 1, 1, 1);
 
-    private bool hit = false;
     private float hitTime;
     private float hitCoolDown = 1.0f;
     public float hitSpeed;
@@ -41,10 +44,14 @@ public class BudgieController : MonoBehaviour {
 
     private Vector3 spawnpoint;
 
+    private float WaterCollisionTime;
+    private float WaterCoolDown = 2.0f;
+
 
     // Use this for initialization
     void Start () {
         speedY = 0;
+        budgieSoundController = GetComponent<BudgieSoundController>();
         charController = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
         animator.SetBool("isIdle", true);
@@ -61,17 +68,50 @@ public class BudgieController : MonoBehaviour {
 
 
     }
-	
-   
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
+        switch (current_mode)
+        {
+            case BUDGIE_MODE.MOVE:
+                updateMovement();
+                break;
+            case BUDGIE_MODE.HIT:
+                hitMovement();
+                break;
+            case BUDGIE_MODE.WATER:
+                waterUpdate();
+                break;
+        }
+    }
+
+    private void waterUpdate()
+    {
+        // respawn after cooldown
+        if(Time.time - WaterCollisionTime > WaterCoolDown)
+        {
+            transform.position = spawnpoint;
+            current_mode = BUDGIE_MODE.MOVE;
+        } else
+        {
+            // sink to the bottom
+            applyGravity();
+            charController.Move(new Vector3(0, speedY, 0) * Time.deltaTime);
+        }
+    }
+
     private void enemyContact(Collider other)
     {
         if (animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))
         {
             Debug.Log("killed enemy");
+            budgieSoundController.playClip(BUDGIE_SOUNDER_CONTROLLER.BUDGIE_SOUND.HIT);
             other.gameObject.GetComponent<BeeController>().initDeath();
         }
-        else
+        else if(other.gameObject.GetComponent<BeeController>().isAlive())
         {
+            budgieSoundController.playClip(BUDGIE_SOUNDER_CONTROLLER.BUDGIE_SOUND.GOT_HIT);
             for (int i = 0; i < materials.Length; i++)
             {
                 materials[i].color = hitColor;
@@ -79,7 +119,7 @@ public class BudgieController : MonoBehaviour {
             // set time of hit
             hitTime = Time.time;
             // set hit flag
-            hit = true;
+            current_mode = BUDGIE_MODE.HIT;
             // randomize hit "jump"
             hitJump = new Vector3((float)rand.NextDouble()+0.5f, 1, (float)rand.NextDouble() + 0.5f);
 
@@ -91,8 +131,8 @@ public class BudgieController : MonoBehaviour {
     {
         if (Time.time - hitTime > hitCoolDown)
         {
-            // hit movement is finished
-            hit = false;
+            // hit movement is finished return to move mode
+            current_mode = BUDGIE_MODE.MOVE;
             for (int i = 0; i < materials.Length; i++)
             {
                 materials[i].color = original_material_color[i];
@@ -121,24 +161,9 @@ public class BudgieController : MonoBehaviour {
         return velocity.sqrMagnitude < 0.25;
     }
 
-    // Update is called once per frame
-    void FixedUpdate ()
-    {
-        if(hit)
-        {
-            hitMovement();
-        } else
-        {
-            // normal movement
-            updateMovement();
-        }
-        
-
-    }
-
     private void updateMovement()
     {
-        Vector3 movementToUse = new Vector3(0, speedY, 0);
+        
         //Debug.DrawRay(transform.position, transform.up*10, Color.green, 0.1f);
         //Debug.DrawRay(transform.position, transform.forward, Color.blue, 0.1f);
         //Debug.DrawRay(transform.position, -transform.up* distToGround, Color.black, 0.1f);
@@ -146,6 +171,7 @@ public class BudgieController : MonoBehaviour {
 
         // gravity
         applyGravity();
+        Vector3 movementToUse = new Vector3(0, speedY, 0);
         Vector3 directionToCamera = followCamera.transform.position - transform.position;
         directionToCamera.y = 0;
 
@@ -238,6 +264,7 @@ public class BudgieController : MonoBehaviour {
 
     void jump()
     {
+        budgieSoundController.playClip(BUDGIE_SOUNDER_CONTROLLER.BUDGIE_SOUND.JUMP);
         speedY = jumpSpeed;
         lastJumpTime = Time.time;
 
@@ -272,12 +299,13 @@ public class BudgieController : MonoBehaviour {
 
 
 
-        } else if (Input.GetKeyDown(KeyCode.LeftControl)) {
+        } else if (Input.GetKeyDown(KeyCode.LeftControl) && !(animator.GetCurrentAnimatorStateInfo(0).IsName("attack"))) {
             animator.SetBool("isJumping", false);
             animator.SetBool("isIdle", false);
             animator.SetBool("isWalking", false);
             animator.SetBool("isRunning", false);
             animator.SetBool("isAttacking", true);
+            budgieSoundController.playClip(BUDGIE_SOUNDER_CONTROLLER.BUDGIE_SOUND.ATTACK);
         }
         else if(Input.GetAxis("Horizontal") != 0 || Input.GetAxis("Vertical") != 0)
         {
@@ -339,7 +367,9 @@ public class BudgieController : MonoBehaviour {
         }
         else if (other.gameObject.CompareTag("water"))
         {
-            transform.position = spawnpoint;
+            budgieSoundController.playClip(BUDGIE_SOUNDER_CONTROLLER.BUDGIE_SOUND.WATER_SPLASH);
+            WaterCollisionTime = Time.time;
+            current_mode = BUDGIE_MODE.WATER;
         }
     }
 

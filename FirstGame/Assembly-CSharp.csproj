@@ -57,6 +57,7 @@
      <Compile Include="Assets\_scripts\BeeController.cs" />
      <Compile Include="Assets\_scripts\budgieBoneController.cs" />
      <Compile Include="Assets\_scripts\BudgieController.cs" />
+     <Compile Include="Assets\_scripts\BudgieSoundController.cs" />
      <Compile Include="Assets\_scripts\CameraController.cs" />
      <Compile Include="Assets\_scripts\CameraControllerAdvanced.cs" />
      <Compile Include="Assets\_scripts\CheckpointController.cs" />
@@ -67,6 +68,7 @@
      <Compile Include="Assets\_scripts\TeleportController.cs" />
      <Compile Include="Assets\_scripts\WindController.cs" />
      <Compile Include="Assets\_scripts\WindmillRotator.cs" />
+     <Compile Include="Assets\test.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>C:/Users/mikae/Desktop/SpelProjekt/mmgames/FirstGame/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>

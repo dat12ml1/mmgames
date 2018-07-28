@@ -48,6 +48,11 @@ public class BeeController : MonoBehaviour {
         return player.GetComponent<Transform>();
     }
 
+    public bool isAlive()
+    {
+        return alive;
+    }
+
     void Update()
     {
         if(alive)
