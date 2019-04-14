@@ -63,6 +63,7 @@
      <Compile Include="Assets\_scripts\CheckpointController.cs" />
      <Compile Include="Assets\_scripts\hex\BattleScript.cs" />
      <Compile Include="Assets\_scripts\hex\characterScript.cs" />
+     <Compile Include="Assets\_scripts\hex\HexCameraController.cs" />
      <Compile Include="Assets\_scripts\hex\hexMapScript.cs" />
      <Compile Include="Assets\_scripts\hex\HexMapUtil.cs" />
      <Compile Include="Assets\_scripts\hex\hexScript.cs" />
