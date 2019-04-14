@@ -22,6 +22,7 @@ public class CameraControllerAdvanced : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        Cursor.visible = false;
         // set cameraTransform to the transform of the scrips gameobject (assumed main camera)
         cameraTransform = transform;
 	}
